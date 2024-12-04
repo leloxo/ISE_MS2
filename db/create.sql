@@ -12,7 +12,7 @@ CREATE TABLE Passenger (
     passport_number VARCHAR(10) PRIMARY KEY,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
-    nationality VARCHAR(50) NOT NULL,
+    nationality VARCHAR(50) NOT NULL
 );
 
 CREATE TABLE Ticket (

@@ -10,9 +10,9 @@ services:
     depends_on:
       - backend
     volumes: # remove when uploading
-      - ./src:/app/src
-      - /app/node_modules 
-      - ./public:/app/public 
+      - ./frontend/src:/app/src
+      - /app/node_modules
+      - ./frontend/public:/app/public 
 
   backend:
     build:
@@ -20,7 +20,7 @@ services:
     ports:
       - 5000:5000
     volumes: # remove when uploading
-      - ./src:/app/src
+      - .//backend/src:/app/src
       - /app/node_modules
     depends_on:
       - mysql
@@ -28,7 +28,7 @@ services:
     environment:
       # MySQL config
       MYSQL_DB_HOST: mysql
-      MYSQL_DB_PORT: 3306
+      MYSQL_DB_PORT: 3307
       MYSQL_DB_USER: root
       MYSQL_DB_PASSWORD: pass
       MYSQL_DB_NAME: ise_mysql
@@ -41,7 +41,7 @@ services:
     image: mysql:8
     restart: always
     ports:
-      - 3306:3306
+      - 3307:3306
     environment:
       MYSQL_ROOT_PASSWORD: pass
       MYSQL_DATABASE: ise_mysql
@@ -54,8 +54,8 @@ services:
     ports:
       - 27017:27017
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: pass
+      MONGODB_INITDB_ROOT_USERNAME: root
+      MONGODB_INITDB_ROOT_PASSWORD: pass
     volumes: # remove when uploading
       - mongo-data:/data/db
 
