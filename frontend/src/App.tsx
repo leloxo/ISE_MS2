@@ -1,9 +1,31 @@
-import React from 'react';
+import React, { useState } from 'react';
+import styles from './app.module.scss';
+import Header from './components/Header/Header';
+import { UserType } from './types/types';
+import Title from './components/Title/Title';
 
 const App: React.FC = () => {
+    const [currentUser, setCurrentUser] = useState<UserType>(UserType.Passenger);
+
+    const handleSelectUser = (user: UserType) => {
+        setCurrentUser(user);
+    };
+
     return (
-        <div>
-            Hello
+        <div className='container'>
+            <Title title='ISE - MS2' />
+            <div className={styles.appContentWrapper}>
+                <Header onSelectUser={handleSelectUser} currentUser={currentUser}/>
+                {currentUser === UserType.Passenger ? (
+                    <div> 
+                        Passanger 
+                    </div>
+                ) : (
+                    <div> 
+                        Flight Dispatcher 
+                    </div>
+                )}
+            </div>
         </div>
     );
 };
