@@ -1,7 +1,7 @@
-import { mysqlConnection } from '../config/db';
+import mysqlConnection from '../config/db';
 import { faker } from '@faker-js/faker';
 
-export const populateDB = async () => {
+export const populateDatabase = async () => {
     // TODO
     try {
 
