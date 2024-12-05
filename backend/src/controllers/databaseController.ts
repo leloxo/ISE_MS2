@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { populateDatabase } from '../services/databaseSeeder';
+import { populateDatabase } from '../services/populateDatabaseService';
 
 export const populateDatabaseHandler = async (req: Request, res: Response, next: NextFunction) => {
     try {
