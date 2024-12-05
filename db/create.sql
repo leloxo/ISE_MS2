@@ -16,31 +16,31 @@ CREATE TABLE Passenger (
 );
 
 CREATE TABLE Ticket (
-    ticket_id INT NOT NULL,
+    ticket_id INT NOT NULL AUTO_INCREMENT,
     seat_number VARCHAR(10) NOT NULL,
     class VARCHAR(20) NOT NULL,
-    passport_number VARCHAR(10),
-    flight_number VARCHAR(10),
+    passport_number VARCHAR(10) NOT NULL,
+    flight_number VARCHAR(10) NOT NULL,
     PRIMARY KEY (ticket_id, flight_number),
     FOREIGN KEY (passport_number) REFERENCES Passenger(passport_number) ON DELETE CASCADE,
     FOREIGN KEY (flight_number) REFERENCES Flight(flight_number) ON DELETE CASCADE
 );
 
 CREATE TABLE CrewMember (
-    employee_id INT PRIMARY KEY,
+    employee_id INT PRIMARY KEY AUTO_INCREMENT,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL
 );
 
 CREATE TABLE Pilot (
-    employee_id INT PRIMARY KEY,
+    employee_id INT PRIMARY KEY AUTO_INCREMENT,
     pilot_rank VARCHAR(20) NOT NULL,
     flight_hours INT NOT NULL,
     FOREIGN KEY (employee_id) REFERENCES CrewMember(employee_id) ON DELETE CASCADE
 );
 
 CREATE TABLE FlightAttendant (
-    employee_id INT PRIMARY KEY,
+    employee_id INT PRIMARY KEY AUTO_INCREMENT,
     role VARCHAR(50) NOT NULL,
     number_of_flights INT NOT NULL,
     FOREIGN KEY (employee_id) REFERENCES CrewMember(employee_id) ON DELETE CASCADE
