@@ -16,15 +16,17 @@ const App: React.FC = () => {
             <Title title='ISE - MS2' />
             <div className={styles.appContentWrapper}>
                 <Header onSelectUser={handleSelectUser} currentUser={currentUser}/>
-                {currentUser === UserType.Passenger ? (
-                    <div> 
-                        Passanger 
-                    </div>
-                ) : (
-                    <div> 
-                        Flight Dispatcher 
-                    </div>
-                )}
+                <div className={styles.mainContainer}>
+                    {currentUser === UserType.Passenger ? (
+                        <div> 
+
+                        </div>
+                    ) : (
+                        <div> 
+
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );
