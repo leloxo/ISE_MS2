@@ -17,8 +17,8 @@ CREATE TABLE Passenger (
 
 CREATE TABLE Ticket (
     ticket_id INT NOT NULL AUTO_INCREMENT,
-    seat_number VARCHAR(10) NOT NULL,
-    class VARCHAR(20) NOT NULL,
+    seat_number VARCHAR(3) NOT NULL,
+    ticket_class VARCHAR(20) NOT NULL,
     passport_number VARCHAR(10) NOT NULL,
     flight_number VARCHAR(10) NOT NULL,
     PRIMARY KEY (ticket_id, flight_number),
