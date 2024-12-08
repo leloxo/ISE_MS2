@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { Flight, Ticket } from "../../types/types";
-import { fetchFlights, fetchFlightsByAirport } from "../../api/flightApi";
-import { bookTicket } from "../../api/ticketApi";
+import React, { useEffect, useState } from 'react';
+import { Flight, Ticket, TicketClass } from '../../types/types';
+import { fetchFlights, fetchFlightsByAirport } from '../../api/flightApi';
+import { bookTicket } from '../../api/ticketApi';
 import styles from './ticketBookingForm.module.scss';
 
 const TicketBookingForm: React.FC = () => {
@@ -9,13 +9,13 @@ const TicketBookingForm: React.FC = () => {
 
     const [departureAirports, setDepartureAirports] = useState<string[]>([]);
     const [destinationAirports, setDestinationAirports] = useState<string[]>([]);
-    const [selectedDepartureAirport, setSelectedDepartureAirport] = useState<string>("");
-    const [selectedDestinationAirports, setSelectedDestinationAirport] = useState<string>("");
+    const [selectedDepartureAirport, setSelectedDepartureAirport] = useState<string>('');
+    const [selectedDestinationAirports, setSelectedDestinationAirport] = useState<string>('');
 
-    const [flightNumber, setFlightNumber] = useState("");
-    const [passportNumber, setPassportNumber] = useState("");
-    const [seatNumber, setSeatNumber] = useState("");
-    const [ticketClass, setTicketClass] = useState("Economy"); // TODO make flight class type
+    const [flightNumber, setFlightNumber] = useState<string>('');
+    const [passportNumber, setPassportNumber] = useState<string>('');
+    const [seatNumber, setSeatNumber] = useState<string>('');
+    const [ticketClass, setTicketClass] = useState<TicketClass>(TicketClass.Economy);
     
     const [bookedTicket, setBookedTicket] = useState<Ticket | null>(null);
     
@@ -150,11 +150,14 @@ const TicketBookingForm: React.FC = () => {
                         Select Class:
                         <select
                             value={ticketClass}
-                            onChange={(e) => setTicketClass(e.target.value)}
+                            onChange={(e) => setTicketClass(e.target.value as TicketClass)}
                             required
                         >
-                            <option value="Economy">Economy</option>
-                            <option value="Business">Business</option>
+                            {Object.values(TicketClass).map((classType) => (
+                                <option key={classType} value={classType}>
+                                    {classType}
+                                </option>
+                            ))}
                         </select>
                     </label>
                     {/* <label>
