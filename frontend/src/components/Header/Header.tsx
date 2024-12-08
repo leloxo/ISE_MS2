@@ -9,19 +9,21 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ onSelectUser, currentUser }) => {
-    const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        onSelectUser(e.target.value as UserType);
-    };
-
     return (
         <div className={styles.headerContainer}>
             <h1>Logged in as {currentUser === UserType.Passenger ? 'Passenger' : 'Flight Dispatcher'}</h1>
 
             <DatabasePopulationButton />
             
-            <select value={currentUser} onChange={handleChange}>
-                <option value={UserType.Passenger}>Passenger</option>
-                <option value={UserType.FlightDispatcher}>Flight Dispatcher</option>
+            <select 
+                value={currentUser} 
+                onChange={(e) => onSelectUser(e.target.value as UserType)}
+            >
+                {Object.values(UserType).map((userType) => (
+                    <option key={userType} value={userType}>
+                        {userType}
+                    </option>
+                ))}
             </select>
         </div> 
     );
