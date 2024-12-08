@@ -1,6 +1,7 @@
 import express from 'express';
 import ticketRoutes from './routes/ticketRoutes';
 import databaseRoutes from './routes/databaseRoutes';
+import flightRoutes from './routes/flightRoutes';
 import { errorHandler } from './middleware/errorHandler';
 
 const app = express();
@@ -8,8 +9,9 @@ const app = express();
 app.use(express.json());
 
 // routes
-app.use('/api/tickets', ticketRoutes);
 app.use('/api/db', databaseRoutes);
+app.use('/api/flights', flightRoutes)
+app.use('/api/tickets', ticketRoutes);
 
 app.use(errorHandler);
 
