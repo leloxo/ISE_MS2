@@ -31,7 +31,7 @@ export const createTicket = async (ticket: Omit<Ticket, 'ticketId'>): Promise<Ti
 
         // Create ticket
         const insertResult: any = await conn.query(
-            `INSERT INTO Ticket (seat_number, class, passport_number, flight_number) 
+            `INSERT INTO Ticket (seat_number, seat_class, passport_number, flight_number) 
              VALUES (?, ?, ?, ?)`,
             [ticket.seatNumber, ticket.ticketClass, ticket.passportNumber, ticket.flightNumber]
         );
