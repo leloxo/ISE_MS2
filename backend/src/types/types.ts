@@ -1,3 +1,12 @@
+export class ServerError extends Error {
+    public status: number;
+
+    constructor(message: string, status: number) {
+        super(message);
+        this.status = status;
+    }
+}
+
 export type Passenger = {
     passportNumber: string;
     firstName: string;
@@ -20,4 +29,5 @@ export type Flight = {
     arrivalTime: Date;
     destinationTime: Date;
     numberOfSeats: number;
+    duration: number;
 };
