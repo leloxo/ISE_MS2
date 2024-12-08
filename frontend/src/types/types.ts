@@ -3,6 +3,12 @@ export enum UserType {
     FlightDispatcher = 'Flight Dispatcher'
 };
 
+export enum TicketClass {
+    Economy = 'Economy',
+    Business = 'Business',
+    First = 'First',
+}
+
 export type Passenger = {
     passportNumber: string;
     firstName: string;
