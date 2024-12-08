@@ -25,4 +25,5 @@ export type Flight = {
     arrivalTime: Date;
     destinationTime: Date;
     numberOfSeats: number;
+    duration: number;
 };
