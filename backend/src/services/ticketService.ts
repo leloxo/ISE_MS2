@@ -1,5 +1,5 @@
 import mysqlConnection from '../config/db';
-import { Ticket } from '../types/types';
+import { ServerError, Ticket } from '../types/types';
 
 export const createTicket = async (ticket: Omit<Ticket, 'ticketId'>): Promise<Ticket> => {
     const conn = await mysqlConnection.getConnection();
@@ -7,8 +7,17 @@ export const createTicket = async (ticket: Omit<Ticket, 'ticketId'>): Promise<Ti
         await conn.beginTransaction();
 
         // Ceck passport number
-        // TODO
+        const [passenger]: any[] = await conn.query(
+            `SELECT * 
+             FROM Passenger 
+             WHERE passport_number = ?`,
+            [ticket.passportNumber]
+        );
+        if (passenger.length === 0) {
+            throw new ServerError('Passenger not found.', 404);
+        }
 
+        // TODO
         // Check if seat is available
         const [seatAvailability]: any[] = await conn.query(
             `SELECT seat_number 
@@ -16,9 +25,8 @@ export const createTicket = async (ticket: Omit<Ticket, 'ticketId'>): Promise<Ti
              WHERE flight_number = ? AND seat_number = ?`,
             [ticket.flightNumber, ticket.seatNumber]
         );
-
         if (seatAvailability.length > 0) {
-            throw new Error('Seat is already booked.');
+            throw new ServerError('Seat is already booked.', 409);
         }
 
         // Create ticket
@@ -27,10 +35,17 @@ export const createTicket = async (ticket: Omit<Ticket, 'ticketId'>): Promise<Ti
              VALUES (?, ?, ?, ?)`,
             [ticket.seatNumber, ticket.ticketClass, ticket.passportNumber, ticket.flightNumber]
         );
-
         if (insertResult.affectedRows === 0) {
-            throw new Error('Failed to insert new ticket.');
+            throw new ServerError('Failed to insert new ticket.', 500);
         }
+
+        // Update flight seat count
+        await conn.query(
+            `UPDATE Flight 
+             SET number_of_seats = number_of_seats - 1 
+             WHERE flight_number = ?`,
+            [ticket.flightNumber]
+        );
 
         // Get generated ticketId
         const ticketId = insertResult.insertId;
