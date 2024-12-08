@@ -27,3 +27,20 @@ export const fetchFlightsByAirport = async (departureAirport: string, destinatio
         throw error;
     }
 };
+
+export const fetchAvailableSeats = async (flightNumber: string, ticketClass: string): Promise<string[]> => {
+    try {
+        const response = await axiosInstance.get('/flights/seats', {
+            params: {
+                flightNumber,
+                ticketClass,
+            },
+        });
+        console.log(response.data);
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching flights: ', error);
+        throw error;
+    }
+};
+

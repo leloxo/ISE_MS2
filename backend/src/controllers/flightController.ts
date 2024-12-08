@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { fetchFlights, fetchFlightsByAirport } from '../services/flightService';
+import { fetchAvailableSeats, fetchFlights, fetchFlightsByAirport } from '../services/flightService';
 import { ServerError } from '../types/types';
 
 export const getFlights = async (req: Request, res: Response, next: NextFunction) => {
@@ -22,6 +22,24 @@ export const getFlightsByAirport = async (req: Request, res: Response, next: Nex
         const response = await fetchFlightsByAirport(
             departureAirport as string, 
             destinationAirport as string 
+        );
+        res.status(200).json(response);
+    } catch (error: any) {
+        next(error);
+    }
+};
+
+export const getAvailableSeats = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { flightNumber, ticketClass } = req.query;
+
+        if (!flightNumber || !ticketClass) {
+            throw new ServerError('Missing required query parameters.', 400);
+        }
+
+        const response = await fetchAvailableSeats(
+            flightNumber as string, 
+            ticketClass as string 
         );
         res.status(200).json(response);
     } catch (error: any) {
