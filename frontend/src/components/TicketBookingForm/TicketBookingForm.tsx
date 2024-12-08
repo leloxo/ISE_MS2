@@ -1,22 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { Flight, Ticket, TicketClass } from '../../types/types';
-import { fetchFlights, fetchFlightsByAirport } from '../../api/flightApi';
+import { fetchAvailableSeats, fetchFlights, fetchFlightsByAirport } from '../../api/flightApi';
 import { bookTicket } from '../../api/ticketApi';
 import styles from './ticketBookingForm.module.scss';
 
 const TicketBookingForm: React.FC = () => {
     const [flightsByAirport, setFlightsByAirport] = useState<Flight[]>([]);
-
     const [departureAirports, setDepartureAirports] = useState<string[]>([]);
     const [destinationAirports, setDestinationAirports] = useState<string[]>([]);
     const [selectedDepartureAirport, setSelectedDepartureAirport] = useState<string>('');
     const [selectedDestinationAirports, setSelectedDestinationAirport] = useState<string>('');
-
     const [flightNumber, setFlightNumber] = useState<string>('');
     const [passportNumber, setPassportNumber] = useState<string>('');
     const [seatNumber, setSeatNumber] = useState<string>('');
     const [ticketClass, setTicketClass] = useState<TicketClass>(TicketClass.Economy);
-    
+    const [availableSeats, setAvailableSeats] = useState<string[]>([]);
     const [bookedTicket, setBookedTicket] = useState<Ticket | null>(null);
     
     useEffect(() => {
@@ -27,9 +25,24 @@ const TicketBookingForm: React.FC = () => {
             } catch (error) {
                 console.error("Error fetching flights:", error);
             }
-        }
+        };
         fetchFlightData();
     }, []);
+
+    useEffect(() => {
+        // Fetch available seats whenever flight number or ticket class changes
+        const fetchSeats = async () => {
+            if (flightNumber && ticketClass) {
+                try {
+                    const fetchedSeats: string[] = await fetchAvailableSeats(flightNumber, ticketClass);
+                    setAvailableSeats(fetchedSeats);
+                } catch (error) {
+                    console.error("Error fetching available seats:", error);
+                }
+            }
+        };
+        fetchSeats();
+    }, [flightNumber, ticketClass]);
 
     const extractAirports = (fetchedFlights: Flight[]) => {
         const fetchedDestinationAirports: Set<string> = new Set();
@@ -70,7 +83,6 @@ const TicketBookingForm: React.FC = () => {
         }
     }
 
-    // select a departure and a destination => get available flights => select flight => select passport number, class, seat and submit
     return (
         <div className={styles.container}>
             <h2>Book a flight ticket</h2>
@@ -87,7 +99,7 @@ const TicketBookingForm: React.FC = () => {
                         <option value='' disabled>
                             Select Departure Airport
                         </option>
-                        {departureAirports && departureAirports.map((airport) => (
+                        {departureAirports.map((airport) => (
                             <option key={airport} value={airport}>
                                 {airport}
                             </option>
@@ -106,7 +118,7 @@ const TicketBookingForm: React.FC = () => {
                         <option value='' disabled>
                             Select Destination Airport
                         </option>
-                        {destinationAirports && destinationAirports.map((airport) => (
+                        {destinationAirports.map((airport) => (
                             <option key={airport} value={airport}>
                                 {airport}
                             </option>
@@ -160,15 +172,23 @@ const TicketBookingForm: React.FC = () => {
                             ))}
                         </select>
                     </label>
-                    {/* <label>
+                    <label>
                         Select Seat:
-                        <input
-                            type="text"
+                        <select
                             value={seatNumber}
                             onChange={(e) => setSeatNumber(e.target.value)}
-                            required
-                        />
-                    </label> */}
+                            required    
+                        >
+                        <option value='' disabled>
+                            Select Seat
+                        </option>
+                        {availableSeats.map((seat) => (
+                            <option key={seat} value={seat}>
+                                {seat}
+                            </option>
+                        ))}
+                    </select>
+                    </label>
                     <button type="submit">Book Ticket</button>
                 </form>
             )}
