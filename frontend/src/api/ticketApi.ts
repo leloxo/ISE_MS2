@@ -3,11 +3,17 @@ import { Ticket } from "../types/types";
 
 export const bookTicket = async (ticket: Omit<Ticket, 'ticketId'>): Promise<Ticket> => {
     try {
-        const response = await axiosInstance.post('/ticket', ticket);
-        console.log(response.data);
+        console.log('Create Ticket:', ticket);
+        const response = await axiosInstance.post('/tickets', ticket);
+        console.log('Response:', response.data);
         return response.data;
-    } catch (error) {
-        console.error('Error booking ticket: ', error);
-        throw error;
+    } catch (error: any) {
+        console.error('Error booking ticket:', error);
+        if (error.response) {
+            console.error('Error message:', error.response.data.message);
+            throw new Error(error.response.data.message);
+        } else {
+            throw new Error('An unexpected error occurred.');
+        }
     }
 };

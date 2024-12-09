@@ -4,7 +4,7 @@ import axiosInstance from './axiosInstance';
 export const fetchFlights = async (): Promise<Flight[]> => {
     try {
         const response = await axiosInstance.get('/flights');
-        console.log(response.data);
+        console.log('Fetched flights: ', response.data);
         return response.data;
     } catch (error) {
         console.error('Error fetching flights: ', error);
@@ -20,7 +20,7 @@ export const fetchFlightsByAirport = async (departureAirport: string, destinatio
                 destinationAirport,
             },
         });
-        console.log(response.data);
+        console.log('Fetched flights by airport: ', response.data);
         return response.data;
     } catch (error) {
         console.error('Error fetching flights: ', error);
