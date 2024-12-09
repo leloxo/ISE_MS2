@@ -26,8 +26,8 @@ export type Flight = {
     flightNumber: string;
     departureAirport: string;
     destinationAirport: string;
+    departureTime: Date;
     arrivalTime: Date;
-    destinationTime: Date;
     numberOfSeats: number;
     duration: number;
 };
