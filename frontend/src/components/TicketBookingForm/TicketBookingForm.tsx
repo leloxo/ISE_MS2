@@ -30,7 +30,6 @@ const TicketBookingForm: React.FC = () => {
     }, []);
 
     useEffect(() => {
-        // Fetch available seats whenever flight number or ticket class changes
         const fetchSeats = async () => {
             if (flightNumber && ticketClass) {
                 try {
@@ -49,10 +48,10 @@ const TicketBookingForm: React.FC = () => {
         const fetchedDepartureAirports: Set<string> = new Set();
         fetchedFlights.forEach((flight: Flight) => {
             fetchedDestinationAirports.add(flight.destinationAirport);
-            fetchedDepartureAirports.add(flight.destinationAirport);
+            fetchedDepartureAirports.add(flight.departureAirport);
         });
         setDestinationAirports(Array.from(fetchedDestinationAirports));
-        setDepartureAirports(Array.from(fetchedDestinationAirports));
+        setDepartureAirports(Array.from(fetchedDepartureAirports));
     }
 
     const handleTicketSubmit = async (e: React.FormEvent) => {
@@ -92,15 +91,15 @@ const TicketBookingForm: React.FC = () => {
                     Select Departure Airport:
 
                     <select
-                        value={flightNumber}
+                        value={selectedDepartureAirport}
                         onChange={(e) => setSelectedDepartureAirport(e.target.value)}
                         required    
                         >
                         <option value='' disabled>
                             Select Departure Airport
                         </option>
-                        {departureAirports.map((airport) => (
-                            <option key={airport} value={airport}>
+                        {departureAirports.map((airport, index) => (
+                            <option key={`departure-${index}-${airport}`} value={airport}>
                                 {airport}
                             </option>
                         ))}
@@ -111,21 +110,21 @@ const TicketBookingForm: React.FC = () => {
                     Select Destination Airport:
 
                     <select
-                        value={flightNumber}
+                        value={selectedDestinationAirports}
                         onChange={(e) => setSelectedDestinationAirport(e.target.value)}
                         required    
                         >
                         <option value='' disabled>
                             Select Destination Airport
                         </option>
-                        {destinationAirports.map((airport) => (
-                            <option key={airport} value={airport}>
+                        {destinationAirports.map((airport, index) => (
+                            <option key={`destination-${index}-${airport}`} value={airport}>
                                 {airport}
                             </option>
                         ))}
                     </select>
                 </label>
-                <button type="submit">Search</button>
+                <button type="submit">Search Flight</button>
             </form>
 
             {flightsByAirport.length > 0 && (
@@ -140,11 +139,11 @@ const TicketBookingForm: React.FC = () => {
                             <option value='' disabled>
                                 Select a flight
                             </option>
-                            {flightsByAirport.map((flight) => (
-                                <option key={flight.flightNumber} value={flight.flightNumber}>
+                            {flightsByAirport.map((flight, index) => (
+                                <option key={`${index}-${flight.flightNumber}`} value={flight.flightNumber}>
                                     {`${flight.flightNumber} 
-                                    - Arrival: ${new Date(flight.arrivalTime).toLocaleTimeString()} 
-                                    - Destination: ${new Date(flight.destinationTime).toLocaleTimeString()}`}
+                                    - Departure: ${new Date(flight.departureTime).toLocaleTimeString()} 
+                                    - Arrival: ${new Date(flight.arrivalTime).toLocaleTimeString()}`}
                                 </option>
                             ))}
                         </select>
@@ -179,15 +178,15 @@ const TicketBookingForm: React.FC = () => {
                             onChange={(e) => setSeatNumber(e.target.value)}
                             required    
                         >
-                        <option value='' disabled>
-                            Select Seat
-                        </option>
-                        {availableSeats.map((seat) => (
-                            <option key={seat} value={seat}>
-                                {seat}
+                            <option value='' disabled>
+                                Select Seat
                             </option>
-                        ))}
-                    </select>
+                            {availableSeats.map((seat) => (
+                                <option key={seat} value={seat}>
+                                    {seat}
+                                </option>
+                            ))}
+                        </select>
                     </label>
                     <button type="submit">Book Ticket</button>
                 </form>
