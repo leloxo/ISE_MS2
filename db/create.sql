@@ -1,5 +1,5 @@
 CREATE TABLE Flight (
-    flight_number VARCHAR(10) PRIMARY KEY,
+    flight_number VARCHAR(6) PRIMARY KEY,
     departure_airport VARCHAR(3) NOT NULL,
     destination_airport VARCHAR(3) NOT NULL,
     departure_time TIMESTAMP NOT NULL,
@@ -9,7 +9,7 @@ CREATE TABLE Flight (
 );
 
 CREATE TABLE Passenger (
-    passport_number VARCHAR(10) PRIMARY KEY,
+    passport_number VARCHAR(8) PRIMARY KEY,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
     nationality VARCHAR(50) NOT NULL
@@ -17,11 +17,12 @@ CREATE TABLE Passenger (
 
 CREATE TABLE Ticket (
     ticket_id INT NOT NULL AUTO_INCREMENT,
-    seat_number VARCHAR(3) NOT NULL,
+    seat_number VARCHAR(4) NOT NULL,
     ticket_class VARCHAR(20) NOT NULL,
-    passport_number VARCHAR(10) NOT NULL,
-    flight_number VARCHAR(10) NOT NULL,
-    PRIMARY KEY (ticket_id, flight_number),
+    passport_number VARCHAR(8) NOT NULL,
+    flight_number VARCHAR(6) NOT NULL,
+    PRIMARY KEY (ticket_id),
+    UNIQUE (flight_number, seat_number),
     FOREIGN KEY (passport_number) REFERENCES Passenger(passport_number) ON DELETE CASCADE,
     FOREIGN KEY (flight_number) REFERENCES Flight(flight_number) ON DELETE CASCADE
 );
@@ -47,7 +48,7 @@ CREATE TABLE FlightAttendant (
 );
 
 CREATE TABLE Flight_CrewMember (
-    flight_number VARCHAR(10),
+    flight_number VARCHAR(6),
     employee_id INT,
     PRIMARY KEY (flight_number, employee_id),
     FOREIGN KEY (flight_number) REFERENCES Flight(flight_number) ON DELETE CASCADE,
@@ -55,8 +56,8 @@ CREATE TABLE Flight_CrewMember (
 );
 
 CREATE TABLE Flight_Passenger (
-    flight_number VARCHAR(10),
-    passport_number VARCHAR(10),
+    flight_number VARCHAR(6),
+    passport_number VARCHAR(8),
     PRIMARY KEY (flight_number, passport_number),
     FOREIGN KEY (flight_number) REFERENCES Flight(flight_number) ON DELETE CASCADE,
     FOREIGN KEY (passport_number) REFERENCES Passenger(passport_number) ON DELETE CASCADE
