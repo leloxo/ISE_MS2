@@ -6,6 +6,7 @@ const DatabasePopulationButton: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [response, setResponse] = useState<string>('');
     const [showPopup, setShowPopup] = useState<boolean>(false);
+    const [error, setError] = useState<boolean>(false);
 
     const handlePopulation = async () => {
         setLoading(true);
@@ -14,6 +15,7 @@ const DatabasePopulationButton: React.FC = () => {
             setResponse('Successfully populated database!');
         } catch (error) {
             setResponse('Error while populating database!');
+            setError(true);
         } finally {
             setLoading(false);
             setShowPopup(true);
@@ -37,7 +39,12 @@ const DatabasePopulationButton: React.FC = () => {
                         <p>
                             {response}
                         </p>
-                        <button onClick={closePopup}>Close</button>
+                        <button
+                            className={error ? styles.errorButton : styles.closeButton}
+                            onClick={closePopup}
+                        >
+                            Close
+                        </button>
                     </div>
                 </div>
             )}
