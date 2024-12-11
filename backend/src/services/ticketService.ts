@@ -17,35 +17,15 @@ export const createTicket = async (ticket: Omit<Ticket, 'ticketId'>): Promise<Ti
             throw new ServerError('Passenger not found.', 404);
         }
 
-        // TODO
-        // Check if seat is available
-        const [seatAvailability]: any[] = await conn.query(
-            `SELECT seat_number 
-             FROM Ticket 
-             WHERE flight_number = ? AND seat_number = ?`,
-            [ticket.flightNumber, ticket.seatNumber]
-        );
-        if (seatAvailability.length > 0) {
-            throw new ServerError('Seat is already booked.', 409);
-        }
-
         // Create ticket
         const insertResult: any = await conn.query(
-            `INSERT INTO Ticket (seat_number, seat_class, passport_number, flight_number) 
+            `INSERT INTO Ticket (seat_number, ticket_class, passport_number, flight_number) 
              VALUES (?, ?, ?, ?)`,
             [ticket.seatNumber, ticket.ticketClass, ticket.passportNumber, ticket.flightNumber]
         );
         if (insertResult.affectedRows === 0) {
             throw new ServerError('Failed to insert new ticket.', 500);
         }
-
-        // Update flight seat count
-        await conn.query(
-            `UPDATE Flight 
-             SET number_of_seats = number_of_seats - 1 
-             WHERE flight_number = ?`,
-            [ticket.flightNumber]
-        );
 
         // Get generated ticketId
         const ticketId = insertResult.insertId;
@@ -58,6 +38,7 @@ export const createTicket = async (ticket: Omit<Ticket, 'ticketId'>): Promise<Ti
         };
     } catch (error) {
         await conn.rollback();
+        console.log('Error booking ticket', error);
         throw error;
     } finally {
         conn.release();
