@@ -1,13 +1,26 @@
 import mysqlConnection from '../config/db';
-import { Flight } from '../types/types';
+import { Flight, ServerError } from '../types/types';
 import { RowDataPacket } from 'mysql2';
+import { divideSeatsByClass } from '../utils/seatUtils';
 
 export const fetchFlights = async (): Promise<Flight[]> => {
     const conn = await mysqlConnection.getConnection();
     try {
         const [rows] = await conn.query<RowDataPacket[]>(`SELECT * FROM Flight`);
-        return rows as Flight[];
+
+        const flights: Flight[]= rows.map((row) => ({
+            flightNumber: row.flight_number,
+            departureAirport: row.departure_airport,
+            destinationAirport: row.destination_airport,
+            departureTime: row.departure_time,
+            arrivalTime: row.arrival_time,
+            numberOfSeats: row.number_of_seats,
+            duration: row.duration,
+        }));
+
+        return flights;
     } catch (error) {
+        console.log('Error fetching flights', error);
         throw error;
     } finally {
         conn.release();
@@ -23,8 +36,20 @@ export const fetchFlightsByAirport = async (departureAirport: string, destinatio
              WHERE departure_airport = ? AND destination_airport = ?`,
             [departureAirport, destinationAirport]
         );
-        return rows as Flight[];
+
+        const flights: Flight[]= rows.map((row) => ({
+            flightNumber: row.flight_number,
+            departureAirport: row.departure_airport,
+            destinationAirport: row.destination_airport,
+            departureTime: row.departure_time,
+            arrivalTime: row.arrival_time,
+            numberOfSeats: row.number_of_seats,
+            duration: row.duration,
+        }));
+
+        return flights;
     } catch (error) {
+        console.log('Error fetching flights by airport', error);
         throw error;
     } finally {
         conn.release();
@@ -40,7 +65,7 @@ export const fetchAvailableSeats = async (flightNumber: string, ticketClass: str
              WHERE flight_number = ? AND ticket_class = ?`,
             [flightNumber, ticketClass]
         );
-        const bookedSeatNumbers = bookedSeats.map((row: { seat_number: string }) => row.seat_number);
+        const bookedSeatNumbers: string[] = bookedSeats.map((row: { seat_number: string }) => row.seat_number);
 
         const [numberOfSeatsQuery]: any[] = await conn.query(
             `SELECT number_of_seats 
@@ -50,23 +75,26 @@ export const fetchAvailableSeats = async (flightNumber: string, ticketClass: str
         );
         const numberOfSeats = numberOfSeatsQuery[0].number_of_seats;
 
-        // TODO use this in db filling script
-        const allSeats: string[] = [];
-        // 4 seats per row (1A, 1B, 1C, 1D)
-        for (let i = 1; i <= Math.ceil(numberOfSeats / 4); i++) {
-            ['A', 'B', 'C', 'D'].forEach(letter => {
-                const seatNumber = `${i}${letter}`;
-                if (allSeats.length < numberOfSeats) {
-                    allSeats.push(seatNumber);
-                }
-            });
-        }
-
-        // Filter out booked seats
-        const availableSeats: string[] = allSeats.filter(seat => !bookedSeatNumbers.includes(seat));
+        const { economySeats, businessSeats, firstClassSeats } = divideSeatsByClass(numberOfSeats);
         
-        return availableSeats;
+        // Filter out booked seats
+        let availableSeatNumbers: string[] = [];
+        switch (ticketClass) {
+            case 'Economy':
+                availableSeatNumbers = economySeats.filter(seat => !bookedSeatNumbers.includes(seat));
+                break;
+            case 'Business':
+                availableSeatNumbers = businessSeats.filter(seat => !bookedSeatNumbers.includes(seat));
+                break;
+            case 'First':
+                availableSeatNumbers = firstClassSeats.filter(seat => !bookedSeatNumbers.includes(seat));
+                break;
+            default:
+                throw new ServerError('Invalid ticket class', 400);
+        }
+        return availableSeatNumbers;
     } catch (error) {
+        console.log('Error fetching availabe seats', error);
         throw error;
     } finally {
         conn.release();
