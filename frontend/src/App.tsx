@@ -4,6 +4,7 @@ import Header from './components/Header/Header';
 import { UserType } from './types/types';
 import Title from './components/Title/Title';
 import TicketBookingForm from './components/TicketBookingForm/TicketBookingForm';
+import FlightInfoReport from './components/FlightInfoReport/FlightInfoReport';
 
 const App: React.FC = () => {
     const [currentUser, setCurrentUser] = useState<UserType>(UserType.Passenger);
@@ -21,6 +22,7 @@ const App: React.FC = () => {
                     {currentUser === UserType.Passenger ? (
                         <div> 
                             <TicketBookingForm />
+                            <FlightInfoReport />
                         </div>
                     ) : (
                         <div> 
