@@ -25,6 +25,7 @@ const DatabasePopulationButton: React.FC = () => {
     const closePopup = () => {
         setShowPopup(false);
         setResponse('');
+        window.location.reload();
     }
 
     return (
