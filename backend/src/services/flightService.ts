@@ -1,5 +1,5 @@
 import mysqlConnection from '../config/db';
-import { Flight, ServerError } from '../types/types';
+import { Flight, FlightInfo, ServerError } from '../types/types';
 import { RowDataPacket } from 'mysql2';
 import { divideSeatsByClass } from '../utils/seatUtils';
 
@@ -95,6 +95,58 @@ export const fetchAvailableSeats = async (flightNumber: string, ticketClass: str
         return availableSeatNumbers;
     } catch (error) {
         console.log('Error fetching availabe seats', error);
+        throw error;
+    } finally {
+        conn.release();
+    }
+};
+
+// Report Student 2
+export const fetchFlightInfo = async (flightNumber: string): Promise<FlightInfo[]> => {
+    const conn = await mysqlConnection.getConnection();
+    try {
+
+        // TODO
+        const [rows] = await conn.query<RowDataPacket[]>(
+            `SELECT
+                p.first_name,
+                p.last_name,
+                p.passport_number,
+                f.departure_airport,
+                f.departure_time,
+                f.destination_airport,
+                f.arrival_time,
+                f.flight_number,
+                t.seat_number,
+                t.ticket_class
+             FROM Ticket t
+             JOIN Passenger p ON t.passport_number = p.passport_number
+             JOIN Flight f ON t.flight_number = f.flight_number
+             WHERE f.flight_number = ?
+             GROUP BY t.seat_number
+             ORDER BY t.seat_number ASC`,
+            [flightNumber]
+        );
+        if (rows.length === 0) {
+            throw new ServerError('Flight not found.', 404);
+        }
+
+        const flightInfo: FlightInfo[] = rows.map((row) => ({
+            passportNumber: row.passport_number,
+            firstName: row.first_name,
+            lastName: row.last_name,
+            flightNumber: row.flight_number,
+            departureAirport: row.departure_airport,
+            destinationAirport: row.destination_airport,
+            departureTime: row.departure_time,
+            arrivalTime: row.arrival_time,
+            seatNumber: row.seat_number,
+            ticketClass: row.ticket_class,
+        }));
+
+        return flightInfo;
+    } catch (error) {
+        console.log('Error fetching flight infos', error);
         throw error;
     } finally {
         conn.release();
