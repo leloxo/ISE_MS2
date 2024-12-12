@@ -4,7 +4,7 @@ import { Ticket } from "../types/types";
 export const bookTicket = async (ticket: Omit<Ticket, 'ticketId'>): Promise<Ticket> => {
     try {
         console.log('Create Ticket:', ticket);
-        const response = await axiosInstance.post('/tickets', ticket);
+        const response = await axiosInstance.post('/ticket/book', ticket);
         console.log('Response:', response.data);
         return response.data;
     } catch (error: any) {

@@ -1,9 +1,9 @@
-import { Flight } from '../types/types';
+import { Flight, FlightInfo } from '../types/types';
 import axiosInstance from './axiosInstance';
 
 export const fetchFlights = async (): Promise<Flight[]> => {
     try {
-        const response = await axiosInstance.get('/flights');
+        const response = await axiosInstance.get('/flight');
         console.log('Fetched flights: ', response.data);
         return response.data;
     } catch (error) {
@@ -14,7 +14,7 @@ export const fetchFlights = async (): Promise<Flight[]> => {
 
 export const fetchFlightsByAirport = async (departureAirport: string, destinationAirport: string): Promise<Flight[]> => {
     try {
-        const response = await axiosInstance.get('/flights/airport', {
+        const response = await axiosInstance.get('/flight/airports', {
             params: {
                 departureAirport,
                 destinationAirport,
@@ -30,7 +30,7 @@ export const fetchFlightsByAirport = async (departureAirport: string, destinatio
 
 export const fetchAvailableSeats = async (flightNumber: string, ticketClass: string): Promise<string[]> => {
     try {
-        const response = await axiosInstance.get('/flights/seats', {
+        const response = await axiosInstance.get('/flight/seats', {
             params: {
                 flightNumber,
                 ticketClass,
@@ -40,6 +40,21 @@ export const fetchAvailableSeats = async (flightNumber: string, ticketClass: str
         return response.data;
     } catch (error) {
         console.error('Error fetching flights: ', error);
+        throw error;
+    }
+};
+
+export const fetchFlightInfo = async (flightNumber: string): Promise<FlightInfo[]> => {
+    try {
+        const response = await axiosInstance.get('/flight/info', {
+            params: {
+                flightNumber,
+            },
+        });
+        console.log(response.data);
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching flight info: ', error);
         throw error;
     }
 };

@@ -12,8 +12,8 @@ app.use(express.json());
 
 // routes
 app.use('/api/db', databaseRoutes);
-app.use('/api/flights', flightRoutes)
-app.use('/api/tickets', ticketRoutes);
+app.use('/api/flight', flightRoutes)
+app.use('/api/ticket', ticketRoutes);
 
 app.use(errorHandler);
 
