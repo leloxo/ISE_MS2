@@ -16,6 +16,9 @@ const TicketBookingForm: React.FC = () => {
     const [ticketClass, setTicketClass] = useState<TicketClass>(TicketClass.Economy);
     const [availableSeats, setAvailableSeats] = useState<string[]>([]);
     const [bookedTicket, setBookedTicket] = useState<Ticket | null>(null);
+
+    // TODO
+    // add error handling
     
     useEffect(() => {
         const fetchFlightData = async () => {
@@ -54,7 +57,7 @@ const TicketBookingForm: React.FC = () => {
         setDepartureAirports(Array.from(fetchedDepartureAirports));
     }
 
-    const handleTicketSubmit = async (e: React.FormEvent) => {
+    const handleSubmitTicket = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
             const ticket: Omit<Ticket, 'ticketId'> = {
@@ -71,14 +74,14 @@ const TicketBookingForm: React.FC = () => {
         }
     }
     
-    const handleAirportSubmit = async (e: React.FormEvent) => {
+    const handleSubmitAirport = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
             const fetchedFlights: Flight[] = await fetchFlightsByAirport(selectedDepartureAirport, selectedDestinationAirports);
             setFlightsByAirport(fetchedFlights);
             // TODO succsess message
         } catch (error) {
-            console.error("Error booking ticket:", error);
+            console.error("Error fetching flights by airport:", error);
         }
     }
 
@@ -86,7 +89,7 @@ const TicketBookingForm: React.FC = () => {
         <div className={styles.container}>
             <h2>Book a flight ticket</h2>
 
-            <form onSubmit={handleAirportSubmit}>
+            <form onSubmit={handleSubmitAirport}>
                 <label>
                     Select Departure Airport:
 
@@ -128,7 +131,7 @@ const TicketBookingForm: React.FC = () => {
             </form>
 
             {flightsByAirport.length > 0 && (
-                <form onSubmit={handleTicketSubmit}>
+                <form onSubmit={handleSubmitTicket}>
                     <label>
                         Select a flight:
                         <select
@@ -142,8 +145,8 @@ const TicketBookingForm: React.FC = () => {
                             {flightsByAirport.map((flight, index) => (
                                 <option key={`${index}-${flight.flightNumber}`} value={flight.flightNumber}>
                                     {`${flight.flightNumber} 
-                                    - Departure: ${new Date(flight.departureTime).toLocaleTimeString()} 
-                                    - Arrival: ${new Date(flight.arrivalTime).toLocaleTimeString()}`}
+                                        - Departure: ${new Date(flight.departureTime).toLocaleString()} 
+                                        - Arrival: ${new Date(flight.arrivalTime).toLocaleString()}`}
                                 </option>
                             ))}
                         </select>
