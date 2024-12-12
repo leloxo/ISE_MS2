@@ -33,3 +33,16 @@ export type Flight = {
     numberOfSeats: number;
     duration: number;
 };
+
+export type FlightInfo = {
+    passportNumber: string;
+    firstName: string;
+    lastName: string;
+    flightNumber: string;
+    departureAirport: string;
+    destinationAirport: string;
+    departureTime: Date;
+    arrivalTime: Date;
+    seatNumber: string;
+    ticketClass: string;
+}
